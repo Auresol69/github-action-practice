@@ -1,0 +1,6 @@
+# Chặn thư mục git cho nhẹ
+.git
+.github
+
+# QUAN TRỌNG: Dấu chấm than (!) nghĩa là KHÔNG ĐƯỢC CHẶN (Phải lấy file này)
+!build/libs
