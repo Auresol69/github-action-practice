@@ -65,12 +65,14 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22 # port mặc định của SSH là 22
+          # 2. Báo cho action biết cần "bắn" biến nào sang EC2
+          envs: DOCKER_USERNAME, DOCKER_PASSWORD
           script: |
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
             docker pull $DOCKER_USERNAME/my-app:latest
             docker stop my-app-container || true
             docker rm my-app-container || true
-            docker run -d --name my-app-container -p 80:8080 $DOCKER_USERNAME/my-app:latest
+            docker run -d --name my-app-container -p 8080:8080 $DOCKER_USERNAME/my-app:latest
 
 
 
