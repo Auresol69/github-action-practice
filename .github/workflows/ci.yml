@@ -44,3 +44,36 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
          
+  deploy-to-ec2:
+    needs: build-java
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22 # Cổng mặc định của SSH là 22
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+            docker stop my-app-container || true
+            docker rm my-app-container || true
+            docker run -d --name my-app-container -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
