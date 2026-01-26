@@ -56,16 +56,21 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" | head -n 1
       - name: SSH into EC2 and Deploy
         uses: appleboy/ssh-action@v1
+        env:
+          # 1. Khai báo biến muốn dùng (lấy từ Secrets)
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22 # port mặc định của SSH là 22
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+            docker pull $DOCKER_USERNAME/my-app:latest
             docker stop my-app-container || true
             docker rm my-app-container || true
-            docker run -d --name my-app-container -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+            docker run -d --name my-app-container -p 80:8080 $DOCKER_USERNAME/my-app:latest
 
 
 
